@@ -1,0 +1,16 @@
+<meta charset="utf-8"/>
+<form id="donation" action="/.netlify/functions/adomany-barion" method="POST">
+<p><label for="amount">Az alábbi mezőbe egy Ön által szívesen meghatározott összeget megadva és a küldés gombra kattintva az utaláshoz a Barion oldalára kerül átirányításra*:</label></p>
+<input type="number" name="amount" min="500" required/> HUF<br/>
+<input type="checkbox" id="tax_certificate" name="tax_certificate"/>
+<label for="tax_certificate">Adóigazolást kérek</label>
+<p>
+<label for="comment">Megjegyzés (amennyiben kér adóigazolást kérem adja meg cége nevét, székhelyét, adószámát, postacímét (adóigazolás küldéséhez)):</label></p>
+<textarea name="comment" id="comment"></textarea><br/>
+<p>
+<input type="checkbox" id="data_privacy" name="data_privacy" required/>
+<label for="data_privacy">Az <a href="/assets/adatvedelmi-tajekoztato-gdpr.docx">Adatvédelmi tájékoztatót</a> elolvastam és elfogadom</label>
+</p>
+<p><button type="submit">Küldés</button></p>
+</form>
+<p><small>*Az online bankkártyás fizetések a Barion rendszerén keresztül valósulnak meg. A bankkártya adatokat a Barion rendszere nem adja ki. A szolgáltatást nyújtó Barion Payment Zrt. a Magyar Nemzeti Bank felügyelete alatt álló intézmény, engedélyének száma: H-EN-I-1064/2013.</small></p>
