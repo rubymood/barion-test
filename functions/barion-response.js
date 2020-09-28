@@ -1,9 +1,8 @@
 exports.handler = function(event, context, callback) {
 
   const Barion = require('barion-nodejs');
-  const {URLSearchParams} = require('url');
 
-    var barion = new Barion(BarionTest);
+  var barion = new Barion(BarionTest);
 
   var BarionRequestBuilderFactory = barion.BarionRequestBuilderFactory;
   var response = "A támogatás küldése ";
