@@ -1,43 +1,17 @@
 exports.handler = function(event, context, callback) {
 
-  require('dotenv').config();
-
   const Barion = require('barion-nodejs');
-  // AWS-en régebbi node van aminél nincs globálisan behívva az URL
-  const {URLSearchParams} = require('url');
-
-  if (process.env['NODE_ENV'] == 'development') {
-    var barion = new Barion(BarionTest);
-    var redirectUrl = "https://barion.specialyoga.hu/adomany-valasz"; 
-    console.log("development");
-
-  } else {
-    var barion = new Barion();
-    var redirectUrl = "https://specialyoga.hu/adomany-valasz"; 
-    console.log("production");
-
-  }
+  var barion = new Barion(BarionTest);
+  var redirectUrl = "http://139.162.139.104:8888/barion-valasz"; 
 
   var BarionRequestBuilderFactory = barion.BarionRequestBuilderFactory;
 
-  let POSKey = "";
   let params = new URLSearchParams(event.body);
   let amount = params.get('amount') || '1000';
-  let taxCertificateMsg = "Adóigazolást ";
-  if (params.get('tax_certificate')) {
-    taxCertificateMsg += "kér.";
-    POSKey = process.env.ADOIGAZOLAS_BARION_POSKEY;
-    Payee = process.env.ADOIGAZOLAS_BARION_EMAIL;
-    redirectUrl += "?tax_certificate=1";
-    console.log("kért adóigazolást");
-  } else {
-    taxCertificateMsg += "nem kér.";
-    POSKey = process.env.BARION_POSKEY;
-    Payee = process.env.BARION_EMAIL;
-    console.log("nem kért adóigazolást");
-  }
+  let POSKey = process.env.BARION_POSKEY;
+  let Payee = process.env.BARION_PAYEE_EMAIL;
   let paymentStartRequestBuilder  = new BarionRequestBuilderFactory.BarionPaymentStartRequestBuilder();
-  console.log(redirectUrl);
+  
   let  paymentStartOptionsWithObject = {
     POSKey: POSKey,
     PaymentType: "Immediate",
@@ -50,7 +24,6 @@ exports.handler = function(event, context, callback) {
         {
             POSTransactionId: "fa-01-01",
             Payee: Payee,
-            Comment: taxCertificateMsg + " " + params.get("comment"),
             Total: amount,
             Items: [
                 {
@@ -72,6 +45,7 @@ exports.handler = function(event, context, callback) {
       console.log(err);
       location = "/adomany-hiba";
     } else
+      console.log(data);
       location = data.GatewayUrl;
 
     return callback(null, {
