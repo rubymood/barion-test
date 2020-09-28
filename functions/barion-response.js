@@ -1,4 +1,4 @@
-exports.handler = function(event, context, callback) {
+exports.handler = (event, context, callback) => {
 
   const Barion = require('barion-nodejs');
 
@@ -15,12 +15,18 @@ exports.handler = function(event, context, callback) {
     PaymentId   : event.queryStringParameters.paymentId
   };
 
+  new Promise((resolve, reject)=> {
   barion.getPaymentState(getPaymentStateOptionsWithObject, function(err, data) {
     if (!err && data.Status == 'Succeeded') {
       response += 'sikeres volt. Köszönöm, hogy adományával segíti a munkámat!';
+	    resolve(data);
     } else {
       response += 'sikertelen volt.';
+	    reject();
     }
+  })}).then((data)=>{
+
+    console.log(data);
 
     return callback(null, {
       statusCode: 200,
@@ -31,9 +37,8 @@ exports.handler = function(event, context, callback) {
           'Origin, X-Requested-With, Content-Type, Accept'
       },
       body: response
-    });
   });
-
+  }).catch(err=> console.log(err));;
 }
 
 
