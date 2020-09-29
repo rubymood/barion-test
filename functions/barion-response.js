@@ -1,6 +1,11 @@
 exports.handler = (event, context, callback) => {
 
+const MongoClient = require("mongodb").MongoClient;
+const MONGODB_URI = process.env.MONGODB_URI;
+const DB_NAME = "barion";
+
   const Barion = require('barion-nodejs');
+  context.callbackWaitsForEmptyEventLoop = false;
 
   var barion = new Barion(BarionTest);
 
@@ -24,10 +29,17 @@ exports.handler = (event, context, callback) => {
       response += 'sikertelen volt.';
 	    reject();
     }
-  })}).then((data)=>{
+  })}).then(async (data)=>{
 
-    console.log(data);
 
+  const client = await MongoClient.connect(MONGODB_URI, {
+    useUnifiedTopology: true,
+  });
+
+  const db = client.db(DB_NAME);
+
+  const dbResponse = await db.collection("teachers").find({}).toArray();
+  console.log(dbResponse);
     return callback(null, {
       statusCode: 200,
       headers: {
@@ -36,6 +48,7 @@ exports.handler = (event, context, callback) => {
         'Access-Control-Allow-Headers': 
           'Origin, X-Requested-With, Content-Type, Accept'
       },
+    //body: JSON.stringify(dbResponse),
       body: response
   });
   }).catch(err=> console.log(err));;
