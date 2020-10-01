@@ -4,13 +4,11 @@ exports.handler = function(event, context, callback) {
   var barion = new Barion(BarionTest);
   var redirectUrl = "http://139.162.139.104:8888/barion-valasz"; 
 
-  var BarionRequestBuilderFactory = barion.BarionRequestBuilderFactory;
 
   let params = new URLSearchParams(event.body);
   let amount = params.get('amount') || '1000';
   let POSKey = process.env.BARION_POSKEY;
   let Payee = process.env.BARION_PAYEE_EMAIL;
-  let paymentStartRequestBuilder  = new BarionRequestBuilderFactory.BarionPaymentStartRequestBuilder();
   
   let  paymentStartOptionsWithObject = {
     POSKey: POSKey,
@@ -40,6 +38,7 @@ exports.handler = function(event, context, callback) {
     RedirectUrl: redirectUrl
   };
 
+  //barion.BarionRequestBuilderFactory.BarionPaymentStartRequestBuilder();
   barion.startPayment(paymentStartOptionsWithObject, function(err, data) {
     if (err) {
       console.log(err);

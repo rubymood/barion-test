@@ -1,12 +1,8 @@
 exports.handler = (event, context, callback) => {
-
+  const mongo = require("./mongo");
  // context.callbackWaitsForEmptyEventLoop = false;
-const MongoClient = require("mongodb").MongoClient;
-const MONGODB_URI = process.env.MONGODB_URI;
-const DB_NAME = "barion";
 
   const Barion = require('barion-nodejs');
-
   var barion = new Barion(BarionTest);
   var response = "A támogatás küldése ";
   let params = new URLSearchParams(event.body);
@@ -23,13 +19,9 @@ const DB_NAME = "barion";
     }
   })}).then(async (data)=>{
 
-
-  const client = await MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true, });
-  const db = client.db(DB_NAME);
-
-  const dbResponse = await db.collection("teachers").find({}).toArray();
-  await client.close();
-  console.log(dbResponse);
+	  await mongo.connect();
+	  const dbResponse = await mongo.getCollection();
+	  await mongo.close();
     return callback(null, {
       statusCode: 200,
       headers: {
