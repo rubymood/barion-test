@@ -7,14 +7,21 @@ class Mongo {
 		this.client = await MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true, })
 		this.db = this.client.db(DB_NAME);
 	}
-	async getCollection()  {
-		return await this.db.collection("teachers").find({}).toArray();
+	async getCollection(collection)  {
+		return await this.db.collection(collection).find({}).toArray();
 	}
-	//todo: insert transaction, update transaction
-	/* res = await collection.updateOne(
-      { name: "Mount McKinley" },
-      { $set: { meters: 6190 } },
-    );*/
+	async insertTransaction(transaction) {
+		await this.db.collection("transactions").insertOne({
+			status: transaction.status, 
+			barionTransactionId: transaction.id
+		})
+	}
+        async updateTransaction(transaction) {
+	        await this.db.collection("transactions").updateOne(
+			{ barionTransactionId: transaction.id },
+			{ $set: { status: transaction.status } }
+		)
+	}
 	async close() {
 		await this.client.close();
 	}

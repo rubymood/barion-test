@@ -3,6 +3,7 @@ exports.handler = function(event, context, callback) {
   const Barion = require('barion-nodejs');
   var barion = new Barion(BarionTest);
   var redirectUrl = "http://139.162.139.104:8888/barion-valasz"; 
+  const mongo = require("./mongo");
 
 
   let params = new URLSearchParams(event.body);
@@ -39,13 +40,23 @@ exports.handler = function(event, context, callback) {
   };
 
   //barion.BarionRequestBuilderFactory.BarionPaymentStartRequestBuilder();
+  new Promise((resolve, reject)=> {
   barion.startPayment(paymentStartOptionsWithObject, function(err, data) {
     if (err) {
-      console.log(err);
       location = "/adomany-hiba";
-    } else
-      console.log(data);
+	    reject();
+    } else {
       location = data.GatewayUrl;
+	    resolve(data);
+    }
+  })}).then(async (data)=>{
+
+	  const transactionData = data.Transactions[0]
+
+	  await mongo.connect();
+	  await mongo.insertTransaction({id: transactionData.TransactionId, status: transactionData.Status});
+//	  const dbResponse = await mongo.getCollection("transactions");
+	  await mongo.close();
 
     return callback(null, {
       statusCode: 302,
@@ -53,7 +64,7 @@ exports.handler = function(event, context, callback) {
         Location: location,
         'Cache-Control': 'no-cache',
       },
-      body: JSON.stringify(err || data)
+   //   body: JSON.stringify(dbResponse)
     });
-  });
+  }).catch(err=> console.log(err));
 }

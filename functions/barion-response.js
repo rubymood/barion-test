@@ -19,8 +19,11 @@ exports.handler = (event, context, callback) => {
     }
   })}).then(async (data)=>{
 
+	  const transactionData = data.Transactions[0]
+
 	  await mongo.connect();
-	  const dbResponse = await mongo.getCollection();
+	  await mongo.updateTransaction({id: transactionData.TransactionId, status: transactionData.Status});
+	  const dbResponse = await mongo.getCollection("transactions");
 	  await mongo.close();
     return callback(null, {
       statusCode: 200,
@@ -30,10 +33,10 @@ exports.handler = (event, context, callback) => {
         'Access-Control-Allow-Headers': 
           'Origin, X-Requested-With, Content-Type, Accept'
       },
-    //body: JSON.stringify(dbResponse),
-      body: response
+    body: JSON.stringify(dbResponse),
+    //  body: "helo world"
   });
-  }).catch(err=> console.log(err));;
+  }).catch((err)=> console.log(err));
 }
 
 
