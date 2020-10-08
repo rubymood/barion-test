@@ -2,7 +2,7 @@ exports.handler = function(event, context, callback) {
 
   const Barion = require('barion-nodejs');
   var barion = new Barion(BarionTest);
-  var redirectUrl = "http://139.162.139.104:8888/barion-valasz"; 
+  var redirectUrl = "http://172.105.82.236:8888/barion-valasz"; 
   const mongo = require("./mongo");
 
 
